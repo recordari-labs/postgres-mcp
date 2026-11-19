@@ -40,9 +40,9 @@ export function loadAppConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
 
   const config = normalize(result.data);
 
-  if (config.security.readonly === false && env.POSTGRES_MCP_ALLOW_WRITES !== 'true') {
+  if (config.security.readonly === false) {
     throw new ConfigError(
-      'security.readonly is false. Refusing to start. v0.1 only runs READ ONLY transactions. Set POSTGRES_MCP_ALLOW_WRITES=true to bypass this check explicitly; writes are still not implemented.',
+      'security.readonly must be true in v0.1. This server only runs READ ONLY transactions.',
     );
   }
 

@@ -26,7 +26,8 @@ export class PostgresTools {
 
   @Tool({
     name: 'list_schemas',
-    description: 'List the database schemas this server is allowed to expose.',
+    description:
+      'List schema names the YAML policy allows and the database role can use. Does not run SQL. Returns an empty list when introspection is disabled. Use before list_tables or execute_query.',
     annotations: readOnly,
   })
   async listSchemas(): Promise<{ schemas: string[] }> {
@@ -36,7 +37,8 @@ export class PostgresTools {
 
   @Tool({
     name: 'list_tables',
-    description: 'List tables and views visible in an authorized schema.',
+    description:
+      'List tables and views in one authorized schema that pass policy checks and database privileges. Hides views whose dependencies include denied relations. Does not return row data.',
     annotations: readOnly,
     inputSchema: z.object({
       schema: z.string().min(1).max(63).describe('Schema name'),
@@ -49,7 +51,8 @@ export class PostgresTools {
 
   @Tool({
     name: 'describe_table',
-    description: 'Describe columns, types, defaults and indexes of an authorized table or view.',
+    description:
+      'Return column types, nullability, defaults, and indexes for one authorized table or view. Rejects relations hidden by policy. Does not sample row contents.',
     annotations: readOnly,
     inputSchema: z.object({
       schema: z.string().min(1).max(63).describe('Schema name'),
@@ -64,7 +67,7 @@ export class PostgresTools {
   @Tool({
     name: 'execute_query',
     description:
-      'Run one read-only SELECT against authorized relations. Results are row-limited and time-limited. INSERT, UPDATE, DELETE and DDL are rejected.',
+      'Run exactly one SELECT or WITH ... SELECT in a READ ONLY transaction. Relations must be allowed by policy; joins to denied tables are rejected. Returns at most security.queries.maxRows rows using a server-side FETCH cap, with statement_timeout. INSERT, UPDATE, DELETE, DDL, COPY, and multiple statements are rejected.',
     annotations: readOnly,
     inputSchema: z.object({
       sql: z.string().min(1).describe('A single SELECT or WITH ... SELECT statement'),

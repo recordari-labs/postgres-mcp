@@ -1,23 +1,40 @@
 # Security
 
-postgres-mcp is a read-only gateway. Report vulnerabilities privately to the Recordari maintainers before opening a public issue. Please include a query or configuration that demonstrates the problem, and avoid live customer data.
+postgres-mcp is a read-only gateway. Report vulnerabilities privately to the Recordari maintainers before opening a public issue. Include a query or configuration that demonstrates the issue. Do not attach live customer data.
 
 ## What v0.1 enforces
 
-- Startup fails closed when the YAML file, database URL, bearer token, or policy is missing or contradictory.
-- Bearer tokens are compared by SHA-256 digest with `timingSafeEqual`.
-- `Host` and `Origin` are checked by `@nestjs/mcp`. `POST /mcp` requires `application/json`.
-- Statements run in a read-only transaction with `statement_timeout`.
-- Relation references are taken from the PostgreSQL parser, then view dependencies are resolved from the catalog when `security.introspection.expandViews` is true (the default).
+- Startup fails when the YAML file, required secrets, or policy is missing or contradictory.
+- `security.readonly: false` aborts startup. There is no write path in v0.1.
+- Bearer tokens are compared with a constant-time digest check.
+- MCP HTTP requests: `Host` and `Origin` checks via `@nestjs/mcp`; `POST /mcp` requires `Content-Type: application/json` and a valid bearer token.
+- Queries run in `BEGIN READ ONLY` with `statement_timeout` and session `default_transaction_read_only=on`.
+- Row caps use a **read-only cursor** and `FETCH (maxRows + 1)` so PostgreSQL does not ship unbounded result sets before truncation.
+- SQL is parsed with the real PostgreSQL parser; relation allow/deny is applied before execution.
+- When `security.introspection.expandViews` is true (default), views are checked through `pg_depend`. This is conservative validation, not a proof that every view or function is side-effect free.
 
-## What you still configure
+## Unauthenticated HTTP routes
 
-- A database role without write privileges. The sample is `examples/sql/create_mcp_readonly_role.sql`.
-- Network exposure. Bind to `127.0.0.1` or a private Docker network.
-- A long random `MCP_TOKEN`. One token is the whole audience in v0.1.
+These endpoints expose **no database data** and accept **no** MCP traffic:
+
+| Route | Response |
+| --- | --- |
+| `GET /healthz` | `{"status":"ok"}` |
+| `GET /logo.png` | PNG project icon |
+
+All tools and `POST /mcp` require bearer authentication.
+
+## What you configure
+
+- A PostgreSQL role limited to `SELECT` on approved relations ([`examples/sql/create_mcp_readonly_role.sql`](examples/sql/create_mcp_readonly_role.sql)).
+- Network exposure: bind MCP to `127.0.0.1` or place it behind Tailscale, SSH, or a private reverse proxy.
+- A long random `MCP_TOKEN`. One token is the whole audience in v0.1—rotate to revoke.
+- `security.http.allowedHosts` must include every hostname clients use (including Tailscale DNS names).
 
 ## Known limits
 
-- A view whose underlying tables are not visible in `pg_depend` to this role is not fully expanded. Create views as a role that cannot read secrets, then grant the MCP role `SELECT` on those views only.
-- Dynamic SQL inside functions is rejected when the function is not in `pg_catalog`. Ordinary `pg_catalog` functions used by a view are allowed unless they are on the denylist in `src/security/sql.validator.ts`.
-- The server does not impersonate several MCP users. Rotate the single bearer token to revoke access.
+- **Views and functions.** `pg_depend` expansion does not cover every indirect access pattern. Prefer approved views in a dedicated schema, owned by a role that cannot read secrets.
+- **SQL surface.** Unparseable or unsupported SQL is rejected. That is intentional.
+- **Single tenant.** No per-user MCP tokens in v0.1.
+
+Regression coverage lives in `test/security` and `test/integration`. Passing tests document the guarantees we are willing to claim—not perfect SQL isolation.

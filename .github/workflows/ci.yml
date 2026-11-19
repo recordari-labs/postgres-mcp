@@ -32,6 +32,13 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run version:check
+      - name: Validate example configs
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/app
+          MCP_TOKEN: ci-validation-token-0123456789
+        run: |
+          CONFIG_PATH=examples/config.minimal.yaml npm run config:validate
+          CONFIG_PATH=examples/config.restricted.yaml npm run config:validate
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test

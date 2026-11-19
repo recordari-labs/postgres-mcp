@@ -59,17 +59,19 @@ security:
     ).toThrow(/Unsupported placeholder/);
   });
 
-  it('refuses readonly false unless the override is explicit', () => {
-    const env = writeConfig(`
+  it('refuses readonly false', () => {
+    expect(() =>
+      loadAppConfig(
+        writeConfig(`
 database:
   url: \${DATABASE_URL}
 security:
   authentication:
     token: \${MCP_TOKEN}
   readonly: false
-`);
-    expect(() => loadAppConfig(env)).toThrow(/readonly is false/);
-    expect(loadAppConfig({ ...env, POSTGRES_MCP_ALLOW_WRITES: 'true' }).security.readonly).toBe(false);
+`),
+      ),
+    ).toThrow(/readonly must be true/);
   });
 
   it('refuses a schema that is both allowed and denied', () => {
