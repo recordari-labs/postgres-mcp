@@ -1,0 +1,12 @@
+node_modules
+dist
+coverage
+.git
+.github
+test
+*.log
+.env
+.env.*
+examples
+docs
+README.md

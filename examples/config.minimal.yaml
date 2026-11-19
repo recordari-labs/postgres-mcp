@@ -1,0 +1,43 @@
+# Minimal policy. Credentials come from the environment, never from this file.
+server:
+  host: 0.0.0.0
+  port: 3000
+  path: /mcp
+
+database:
+  url: ${DATABASE_URL}
+  pool:
+    max: 5
+    connectionTimeoutMs: 5000
+
+security:
+  authentication:
+    type: bearer
+    token: ${MCP_TOKEN}
+
+  readonly: true
+
+  http:
+    allowedHosts:
+      - localhost
+      - 127.0.0.1
+      - "[::1]"
+
+  access:
+    schemas:
+      allow:
+        - public
+
+  queries:
+    timeoutMs: 10000
+    maxRows: 1000
+    maxConcurrent: 3
+    maxSqlLength: 10000
+    singleStatement: true
+
+  introspection:
+    enabled: true
+
+logging:
+  level: info
+  logQueries: false

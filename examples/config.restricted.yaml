@@ -1,0 +1,58 @@
+# Stricter policy: an explicit table allow-list plus a deny-list.
+server:
+  host: 127.0.0.1
+  port: 3000
+  path: /mcp
+
+database:
+  url: ${DATABASE_URL}
+  pool:
+    max: 2
+    connectionTimeoutMs: 3000
+
+security:
+  authentication:
+    type: bearer
+    token: ${MCP_TOKEN}
+    resource: http://127.0.0.1:3000/mcp
+
+  readonly: true
+
+  http:
+    allowedHosts:
+      - localhost
+      - 127.0.0.1
+      - "[::1]"
+    allowedOrigins:
+      - localhost
+      - 127.0.0.1
+      - "[::1]"
+
+  access:
+    defaultSchema: public
+    schemas:
+      allow:
+        - public
+    tables:
+      allow:
+        - public.customers
+        - public.orders
+      deny:
+        - public.user_credentials
+        - public.api_keys
+        - public.sessions
+
+  queries:
+    timeoutMs: 5000
+    maxRows: 200
+    maxConcurrent: 2
+    maxSqlLength: 4000
+    singleStatement: true
+
+  introspection:
+    enabled: true
+    expandViews: true
+
+logging:
+  level: info
+  logQueries: false
