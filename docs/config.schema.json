@@ -244,5 +244,5 @@
   "$id": "https://recordari.github.io/postgres-mcp/config.schema.json",
   "title": "postgres-mcp configuration",
   "description": "YAML configuration for the postgres-mcp server. Only ${DATABASE_URL} and ${MCP_TOKEN} may appear as env placeholders in YAML files.",
-  "x-postgres-mcp-version": "0.1.0"
+  "x-postgres-mcp-version": "0.2.0"
 }
