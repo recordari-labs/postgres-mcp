@@ -39,6 +39,7 @@ jobs:
         run: |
           CONFIG_PATH=examples/config.minimal.yaml npm run config:validate
           CONFIG_PATH=examples/config.restricted.yaml npm run config:validate
+      - run: npm run config:schema:check
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test

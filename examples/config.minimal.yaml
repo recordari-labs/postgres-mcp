@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../docs/config.schema.json
 # Minimal policy. Credentials come from the environment, never from this file.
 server:
   host: 0.0.0.0

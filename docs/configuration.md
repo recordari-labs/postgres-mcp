@@ -1,5 +1,23 @@
 # Configuration reference
 
+JSON Schema for editors: **[config.schema.json](config.schema.json)** (`npm run config:schema` regenerates it from Zod).
+
+Add at the top of your `config.yaml`:
+
+```yaml
+# yaml-language-server: $schema=./docs/config.schema.json
+```
+
+In VS Code / Cursor, associate the schema once in `.vscode/settings.json`:
+
+```json
+{
+  "yaml.schemas": {
+    "./docs/config.schema.json": "config.yaml"
+  }
+}
+```
+
 The server reads a single YAML file (default `config.yaml`, override with `CONFIG_PATH`). Only `${DATABASE_URL}` and `${MCP_TOKEN}` are expanded from the environment. Any other `${VAR}` causes startup to fail.
 
 Validate a file without starting the server:

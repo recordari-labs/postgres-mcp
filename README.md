@@ -37,7 +37,7 @@ The PostgreSQL role is the primary boundary. YAML adds schema/table rules, row a
 | [Connect your database](#connect-your-database) | Existing PostgreSQL |
 | [Connect your AI client](#connect-your-ai-client) | Cursor / Streamable HTTP |
 | [MCP tools](#mcp-tools) | What agents can call |
-| [Configuration](docs/configuration.md) | Full YAML reference |
+| [Configuration](docs/configuration.md) | Full YAML reference + [JSON Schema](docs/config.schema.json) |
 | [Docker deployment](docs/deployment/docker.md) | Production container layout |
 | [Tailscale deployment](docs/deployment/tailscale.md) | Private VM + HTTPS |
 | [Security model](SECURITY.md) | Guarantees and limits |
@@ -153,7 +153,7 @@ Tool descriptions are also exposed to clients via MCP `tools/list`.
 
 ## Configuration
 
-See [docs/configuration.md](docs/configuration.md) for every key, default, and placeholder rule.
+See [docs/configuration.md](docs/configuration.md) for every key, default, and placeholder rule. Editor autocomplete: [docs/config.schema.json](docs/config.schema.json) (regenerate with `npm run config:schema`; attached to each [GitHub Release](https://github.com/recordari/postgres-mcp/releases)).
 
 Minimal shape:
 

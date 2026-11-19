@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../docs/config.schema.json
 # Mounted by examples/docker-compose.yaml. Do not put secrets in this file.
 server:
   host: 0.0.0.0

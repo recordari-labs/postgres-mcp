@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../docs/config.schema.json
 # Stricter policy: an explicit table allow-list plus a deny-list.
 server:
   host: 127.0.0.1

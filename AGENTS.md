@@ -26,6 +26,8 @@ npm test
 npm run lint
 npm run typecheck
 npm run config:validate   # needs CONFIG_PATH, DATABASE_URL, MCP_TOKEN
+npm run config:schema     # writes docs/config.schema.json; run after schema changes
+npm run config:schema:check
 ```
 
 Integration tests need PostgreSQL:
@@ -78,6 +80,7 @@ Before finishing a change:
 - [docs/configuration.md](docs/configuration.md) — YAML contract
 - [SECURITY.md](SECURITY.md) — threat model and disclosure
 - [examples/](examples/) — supported configuration samples
-- `src/config/config.schema.ts` — schema implementation
+- `src/config/config.schema.ts` — schema implementation (source of truth)
+- `docs/config.schema.json` — generated JSON Schema for editors; keep in sync via `npm run config:schema`
 
 Do not assume undocumented configuration keys exist. Read the schema and loader before using or exposing options.

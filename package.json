@@ -15,6 +15,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "version:check": "node scripts/print-release-version.mjs",
     "config:validate": "tsx scripts/validate-config.ts",
+    "config:schema": "tsx scripts/generate-config-schema.ts",
+    "config:schema:check": "npm run config:schema && git diff --exit-code -- docs/config.schema.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:integration": "vitest run --config vitest.integration.config.ts"
