@@ -25,7 +25,7 @@
     "@modelcontextprotocol/client": "^2.4.0",
     "@modelcontextprotocol/server": "^2.4.0",
     "@nestjs/common": "^12.5.1",
-    "@nestjs/core": "^12.5.1",
+    "@nestjs/core": "^12.6.0",
     "@nestjs/mcp": "^0.0.4",
     "@nestjs/platform-express": "^12.5.1",
     "js-yaml": "^5.5.0",
